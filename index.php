@@ -1,4 +1,58 @@
 <?php
+
+use Tarefas\Models\RepositorioTarefas;
+
+spl_autoload_registrar(function($classe)
+{
+	$partes = explode('\\', $classe);
+
+	if(count($partes) == 1){ 
+		if(is_file(__DIR__ . "/models/{$classe}.php")){
+				require_once __DIR__. "models/{$classe}.php";
+				return;
+		}
+	}
+
+	if($partes[0] !== 'Tarefas'){
+		return;
+	}
+	
+	array_shift($partes);
+	$classe = array_pop($pasta);
+
+	$caminho = [];
+	foreach($partes as $pasta){
+			$caminho[] = strtolower($pasta);
+	}
+
+	$caminho[] = $classe . '.php';
+	
+	$arquivo = __DIR__ . '/' . implode('/', $caminho);
+	
+	if(is_file($arquivo)){
+		require_once $arquivo;
+	}
+})
+
+require "config.php";
+require "helpers/banco.php";
+require "helpers/ajudantes.php";
+
+$repositorio_tarefas = new RepositorioTarefas($pdo);
+
+$rota = "tarefas";
+
+if(array_key_exists("rota", $_GET)) 
+{
+	$rota=(string) $_GET["rota"];
+}
+
+if(is_file("controllers/{$rota}.php")){
+	require "controllers/{$rota}.php";
+} else{
+	echo "Rota não encontrada";
+}
+
 	if (!empty($_SERVER['HTTPS']) && ('on' == $_SERVER['HTTPS'])) {
 		$uri = 'https://';
 	} else {
@@ -8,4 +62,4 @@
 	header('Location: '.$uri.'/dashboard/');
 	exit;
 ?>
-Something is wrong with the XAMPP installation :-(
+Something is wrong with the XAMPP installation :-;

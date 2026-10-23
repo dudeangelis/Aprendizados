@@ -1,31 +1,43 @@
  <form method = "POST">
-    <input type="hidden" name="id" value="<?php echo $tarefa['id']; ?>"/> 
+    <input type="hidden" name="id" value="<?php echo $tarefa->getId(); ?>"/> 
         <label>
             Tarefa:
-            <input type="text" name="nome" value="<?php echo $tarefa['nome']; ?> />
+            <input type="text" name="nome" value <?php echo $tarefa->getNome(); ?>
+            <?php if ($tem_erros && array_key_exists('nome', $erros_validacao)) : ?>
+                <span class="erro">
+                    <?php echo $erros_validacao['nome']; ?>
+                </span>
+            <?php endif; ?>
+            <input type="text" name="nome" value="<?php echo htmlentities($tarefa->getNome()); ?> />
         </label>
         <label>
             Descrição(Opcional):
             <textarea name = "descricao"> 
-                <?php echo $tarefa['descricao']; ?>
+                <?php echo htmlentities($tarefa->getDescricao()); ?>
             </textarea>
         </label>
         <label>
             Prazo (Opcional):
-            <input type="text" name="prazo" value="<?php echo traduz_data_para_exibir($tarefa['prazo']); />
+            <?php 
+            if ($tem_erros && array_key_exists('prazo', $erros_validacao)) : ?>
+            <span class = "erro">
+                <?php echo $erros_validacao['prazo']; ?>
+            </span>
+            <?php endif; ?>
+            <input type="text" name="prazo" value="<?php echo traduz_data_para_exibir($tarefa->getPrazo()); />
         </label>
         <input type = "hidden" name = "id" value="<?php echo $tarefa['id']; ?> />
     <fieldset>
         <legend>Prioridade:</legend>
         <label>
             <input type="radio" name="prioridade" value="1"
-            <?php echo ($tarefa['prioridade'] == 1)
+            <?php echo ($tarefa->getPrioridade() == 1)
                 ? 'checked' : ''; ?> />Baixa
             <input type="radio" name="prioridade" value="2"
-            <?php echo ($tarefa['prioridade'] ==2)
+            <?php echo ($tarefa->getPrioridade() ==2)
                 ? 'checked' : ''; ?> />Media 
             <input type="radio" name="prioridade" value="3"
-            <?php echo ($tarefa['prioridade'] == 3)
+            <?php echo ($tarefa->getPrioridade() == 3)
                 ? 'checked' : ''; ?> />Alta
         </label>
     </fieldset>
@@ -33,6 +45,8 @@
             Tarefa concluída:
             <input type="checkbox" name="concluida" value="1"/>
         </label>
-        <input type="submit" value="<?php echo ($tarefa['id'] > 0) ? 'Atualizar' : 'Cadastrar'; ?>"/>
+        <input type="submit" value="<?php echo ($tarefa->getConcluida() > 0) ? 'Atualizar' : 'Cadastrar'; ?>"/>
+
+        <input type="submit" value="<?php echo ($tarefa->getId() > 0) ? 'Atualizar' : 'Cadastrar'; ?> class="botao" />
 
  </form>

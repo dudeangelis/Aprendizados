@@ -1,12 +1,23 @@
 <?php
 
-require "config.php";
-require "banco.php";
-require "ajudantes.php";
-require "RepositorioAnexos.php";
-require "RepositorioTarefas.php";
+$exibir_tabela = true;
+
+$tem_erros = false;
+$erros_validacao = [];
+
+$tarefa = new Tarefa\Models\Tarefa.php();
+$tarefa->setPrioridade(1);
 
 $repositorio_tarefas = new RepositorioTarefas($mysqli);
+$repositorio_tarefas = new RepositorioTarefas($pdo);
+
+try {
+    $tarefa = $repositorio_tarefa->buscar($_GET['id']);
+} catch (Exception $e){
+    http_responde_code(404);
+    echo "Erro ao buscar tarefa: " . $e->getMessage();
+    die();
+}
 
 $tarefa = $repositorio_tarefas->buscar($_GET['id']);
 
@@ -35,8 +46,17 @@ if(tem_post()){
 
     if (! $tem_erros)
     {
-        $repositorio_tarefas->salvar_anexo($anexo);
+        $repositorio_tarefas->salvar($tarefa);
+
+        if(isset($_POST['lembrete']) && $_POST['lembrete'] == '1')
+        {
+            enviar_email($tarefa);
+        }
+
+        header('Location: index.php?rota=tarefas');
+        die();
     }
 }
 
-include "template_tarefa.php"; 
+require __DIR__ . "/../template_tarefa.php"; 
+require __DIR__ . "/../views/template.php";

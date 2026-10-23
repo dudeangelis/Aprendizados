@@ -1,7 +1,15 @@
 <?php
 
-require "banco.php";
+$exibir_tabela = true;
 
-remover_tarefa($conexao, $_GET['id']);
+$tem_erros = false;
+$erros_validacao = [];
 
-header ('Location: tarefas.php');
+$tarefa = new Tarefa();
+$tarefa->setPrioridade(1);
+
+$repositorio_tarefas = new RepositorioTarefas($mysqli);
+$repositorio_tarefas->remover($_GET['id']);
+$repositorio_tarefas = new RepositorioTarefas($pdo);
+
+header('Location: index.php?rota=tarefas');
